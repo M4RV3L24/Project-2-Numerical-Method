@@ -1,17 +1,28 @@
+# Nicholas Sindoro      C14220142
+# Christophorus Ivan    C14220210
+# Marvel Wilbert O      C14220223
+
 import numpy as np
 import matplotlib.pyplot as plt
 from tabulate import tabulate as tab
 
 
-def gauss_seidel(A, b, n, tol):
+def gauss_seidel(A, b, n, es):
 
     global table_content, table_header
+
+    # check if n < 3
+    if n < 3:
+        print("Number of unknowns must be at least 3")
+        return
 
     # Initialize the solution vector with zeros
     x = np.zeros(n)
     
     # Maximum number of iterations to avoid infinite loops
     max_iter = 1000
+
+    # Initialize the approximate relative error vector
     ea = np.zeros(n)
 
     # Iterative process
@@ -37,12 +48,12 @@ def gauss_seidel(A, b, n, tol):
         table_content.append([k, np.array2string(x), np.array2string(ea)])
         
         # Check for convergence using Eucledean norm to ensure all x is considered.
-        # if np.linalg.norm(x - x_old) < tol:
+        # if np.linalg.norm(x - x_old) < es:
         #     # If the solution has converged, exit the loop
         #     break
 
         # Check for convergence using the maximum relative error
-        if np.max(ea) <= tol:
+        if np.max(ea) <= es:
             # If the solution has converged, exit the loop
             break
     
@@ -68,10 +79,12 @@ b = np.array([7.85, -19.3, 71.4])  # Constants on the right-hand side of the equ
 n = len(b)  # Number of equations/unknowns
 
 # Define the tolerance for convergence
-tol = 1e-6  # Accuracy to be achieved
+es = 1e-6  # Accuracy to be achieved
 
 # Solve the system using the Gauss-Seidel method
-x = gauss_seidel(A, b, n, tol) #same as using alpha = 1 for relaxation
+x = gauss_seidel(A, b, n, es) #same as using alpha = 1 for relaxation
 
 # Print the solution
 print("Solution:", x)
+
+

@@ -1,0 +1,89 @@
+# Nicholas Sindoro      C14220142
+# Christophorus Ivan    C14220210
+# Marvel Wilbert O      C14220223
+
+import numpy as np
+import matplotlib.pyplot as plt
+from tabulate import tabulate as tab
+
+def jacobi(A, b, n, es):
+    
+    global table_content, table_header
+
+    # check if n < 3
+    if n < 3:
+        print("Number of unknowns must be at least 3")
+        return
+
+    # Initialize the solution vector with zeros
+    x = np.zeros(n)
+    
+    # Maximum number of iterations to avoid infinite loops
+    max_iter = 1000
+
+    # Initialize the approximate relative error vector
+    ea = np.zeros(n)
+    
+    # Iterative process
+    for k in range(max_iter):
+        # Store the current solution to compare later
+        x_old = x.copy()
+        
+        # Iterate through each variable
+        for i in range(n):
+            # Calculate the sum of A[i, j] * x_old[j] for all j
+            sum1 = np.dot(A[i, :], x_old)
+            
+            # Update the value of x[i] using the Jacobi formula
+            x[i] = (b[i] - sum1 + A[i, i] * x_old[i]) / A[i, i]
+
+            # Calculate the approximate relative error
+            ea[i] = abs((x[i] - x_old[i])/x[i]) * 100
+        
+        
+        # Compute the Euclidean norm of the error
+        # error = np.linalg.norm(x - x_old)
+        
+        # Append the current error to the list
+        table_content.append([k, np.array2string(x), np.array2string(ea)])
+        
+        
+        # Check for convergence
+        if np.max(ea) < es:
+            # If the solution has converged, exit the loop
+            break
+    
+    
+    # Return the final solution vector
+    print(tab(table_content, headers=table_header, tablefmt="grid"))
+
+    # Return the final solution vector and the list of errors
+    return x
+
+
+# data for table
+table_header = ['iteration', 'xi', 'ea(%)']
+table_content = []
+
+# Define the coefficient matrix A
+A = np.array([
+    [3, -0.1, -0.2],  # Coefficients of the first equation
+    [0.1, 7, -0.3],  # Coefficients of the second equation
+    [0.3, -0.2, 10]   # Coefficients of the third equation
+])
+
+# Define the constant vector b
+b = np.array([7.85, -19.3, 71.4])  # Constants on the right-hand side of the equations
+
+# Define the number of unknowns n
+n = len(b)  # Number of equations/unknowns
+
+# Define the tolerance for convergence
+es = 1e-6  # Accuracy to be achieved
+
+# Solve the system using the Jacobi method
+x = jacobi(A, b, n, es)
+
+# Print the solution
+print("Solution:", x)
+
