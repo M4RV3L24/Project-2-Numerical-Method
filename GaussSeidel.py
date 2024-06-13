@@ -87,4 +87,3 @@ x = gauss_seidel(A, b, n, es) #same as using alpha = 1 for relaxation
 # Print the solution
 print("Solution:", x)
 
-
