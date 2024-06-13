@@ -45,7 +45,7 @@ def gauss_seidel(A, b, n, es):
             # Calculate the approximate relative error
             ea[i] = abs((x[i] - x_old[i])/x[i]) * 100
         
-        table_content.append([k, np.array2string(x), np.array2string(ea)])
+        table_content.append([k+1, np.array2string(x), np.array2string(ea)])
         
         # Check for convergence using Eucledean norm to ensure all x is considered.
         # if np.linalg.norm(x - x_old) < es:

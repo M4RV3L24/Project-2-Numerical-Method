@@ -45,7 +45,7 @@ def jacobi(A, b, n, es):
         # error = np.linalg.norm(x - x_old)
         
         # Append the current error to the list
-        table_content.append([k, np.array2string(x), np.array2string(ea)])
+        table_content.append([k+1, np.array2string(x), np.array2string(ea)])
         
         
         # Check for convergence
