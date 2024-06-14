@@ -1,31 +1,31 @@
-function x = Raphson(A, b, n,precision)
-    % Fungsi newton_raphson untuk mencari solusi sistem persamaan linear
-    % Menggunakan metode Newton-Raphson.
+function x = Raphson(A, b, n, precision)
+    % Newton-Raphson function to find the solution of a system of linear equations
+    % Using the Newton-Raphson method.
     %
-    % Masukan:
-    % n - jumlah persamaan/variabel yang tidak diketahui
-    % A - matriks koefisien persamaan
-    % b - vektor konstanta pada sisi kanan persamaan
-    % precision - jumlah digit desimal dari akurasi yang ingin dicapai
+    % Inputs:
+    % n - number of equations/unknown variables
+    % A - matrix of equation coefficients
+    % b - vector of constants on the right side of the equations
+    % precision - number of decimal digits for the desired accuracy
     %
-    % Keluaran:
-    % x - vektor solusi
+    % Outputs:
+    % x - solution vector
 
-    % Inisialisasi vektor solusi x dengan nol
+    % Initialize the solution vector x with zeros
     x = zeros(n, 1);
 
-    % Toleransi kesalahan
+    % Error tolerance
     es = (0.5 * 10^(2 - precision)) / 100;
 
-    % Inisialisasi penghitung iterasi
+    % Initialize iteration counter
     iter_count = 0;
 
-    % Lakukan iterasi sampai konvergen
+    % Perform iterations until convergence
     while true
-        % Salin x untuk menghitung kesalahan (ea)
+        % Copy x to calculate the error (ea)
         x_temp = x;
 
-        % Inisialisasi matriks Jacobian j
+        % Initialize the Jacobian matrix j
         j = zeros(n, n);
         for i = 1:n
             for k = 1:n
@@ -33,7 +33,7 @@ function x = Raphson(A, b, n,precision)
             end
         end
 
-        % Hitung f(x), nilai fungsi pada pendekatan saat ini
+        % Calculate f(x), the function value at the current approximation
         fx = zeros(n, 1);
         for i = 1:n
             equation = -b(i);
@@ -43,18 +43,18 @@ function x = Raphson(A, b, n,precision)
             fx(i) = equation;
         end
 
-        % Perbarui vektor solusi menggunakan rumus Newton-Raphson: x = x - J^-1 * f(x)
+        % Update the solution vector using the Newton-Raphson formula: x = x - J^-1 * f(x)
         x -= inv(j) * fx;
 
-        % Hitung kesalahan untuk setiap elemen vektor solusi
+        % Calculate the error for each element of the solution vector
         ea = abs((x - x_temp) ./ x) * 100;
 
-        % Cetak hasil iterasi
+        % Print the results of the iteration
         printf('Iteration %d:\n', iter_count + 1);
         printf('xi = %s\n', mat2str(x, precision));
         printf('ea(%%) = %s\n\n', mat2str(ea, precision));
 
-        % Periksa apakah kriteria penghentian terpenuhi
+        % Check if the stopping criterion is met
         if all(ea <= es)
             break;
         end
@@ -62,5 +62,3 @@ function x = Raphson(A, b, n,precision)
         iter_count += 1;
     end
 end
-
-
