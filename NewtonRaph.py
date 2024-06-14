@@ -1,13 +1,22 @@
 import numpy as np
+from tabulate import tabulate as tab
 
-def newton_raphson(n, matrix, precision):
+def newton_raphson(n, A, b, precision):
+    global table_content, table_header
+
     # Initialize solution vector x with zeros
     x = np.zeros(n)
 
-    # Calculate the stopping criteria es based on the given precision
+    # Error tolerance
     es = (0.5 * 10**(2 - precision)) / 100
 
-    while True:
+    # Maximum number of iterations to avoid infinite loops
+    max_iter = 1000
+
+    # Initialize the iteration counter
+    iter_count = 0
+
+    while iter_count < max_iter:
         # Make a copy of x to calculate the error (ea)
         x_temp = np.copy(x)
 
@@ -15,54 +24,59 @@ def newton_raphson(n, matrix, precision):
         j = np.zeros((n, n))
         for i in range(n):
             for k in range(n):
-                j[i][k] = matrix[i][k]
+                j[i][k] = A[i][k]
 
         # Calculate f(x), which is the function values at the current approximation
         fx = np.zeros(n)
         for i in range(n):
-            equation = - matrix[i][n]
+            equation = -b[i]
             for k in range(n):
-                equation += (matrix[i][k] * x[k])
+                equation += (A[i][k] * x[k])
             fx[i] = equation
 
         # Update the solution vector using the Newton-Raphson formula: x = x - J^-1 * f(x)
         x -= np.dot(np.linalg.inv(j), fx)
 
         # Calculate the error for each element of the solution vector
-        e = np.abs(x - x_temp)
+        ea = np.abs((x - x_temp) / x) * 100
 
-        # print data
-        print("x: ", x)
+        # Add iteration results to the table
+        table_content.append([iter_count + 1, np.array2string(x, precision=precision), np.array2string(ea, precision=precision)])
 
         # Check if the stopping criteria is met
-        if np.all(e <= es):
-            return x
+        if np.all(ea <= es):
+            break
 
-# Input the value of n (size of the matrix)
-n = int(input("Input n: "))
-matrix = []
+        iter_count += 1
 
-# Loop to take the matrix inputs from the user
-for i in range(n):
-    temp = []
-    for j in range(n + 1):
-        # Input the value for each element in the matrix
-        x = float(input(f'Input matrix[{i}][{j}]: '))
-        temp.append(x)
-    matrix.append(temp)
+    # Print the table
+    print(tab(table_content, headers=table_header, tablefmt="grid"))
 
-# Input the precision for the solution
-precision = int(input('Input precision: '))
+    return x
 
+# data for table
+table_header = ['Iteration', 'xi', 'ea(%)']
+table_content = []
 
-# Print the input matrix
-print("Input matrix:")
-for i in range(n):
-    for j in range(n + 1):
-        print(matrix[i][j], end=" ")
-    print("")
+# Define the coefficient matrix A
+A = np.array([
+    [3, -0.1, -0.2],  # Coefficients of the first equation
+    [0.1, 7, -0.3],   # Coefficients of the second equation
+    [0.3, -0.2, 10]   # Coefficients of the third equation
+])
 
-# Call the newton_raphson function and print the result
-result = newton_raphson(n, matrix, precision)
+# Define the constant vector b
+b = np.array([7.85, -19.3, 71.4])  # Constants on the right-hand side of the equations
+
+# Number of unknowns
+n = len(b)
+
+# Decimal precision
+precision = 5
+
+# Solve the system using the Newton-Raphson method
+result = newton_raphson(n, A, b, precision)
+
+# Print the solution
 print("Solution vector:")
 print(result)
